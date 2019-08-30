@@ -1,3 +1,6 @@
+# universal sentence encoder tf model
+sentence_encoder_cache
+
 # pycharm
 .idea
 
