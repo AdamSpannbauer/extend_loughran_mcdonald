@@ -1,0 +1,8 @@
+tensorflow
+tensorflow_hub
+pandas
+xlrd >= 1.0.0  # for pandas.read_excel()
+numpy
+tqdm
+requests
+bs4
