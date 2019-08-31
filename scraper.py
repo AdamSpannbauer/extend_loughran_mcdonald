@@ -27,7 +27,7 @@ class Scraper:
 
     def _wait_on_request_rate(self):
         if self.verbose:
-            print(f'Waiting for {self.crawl_delay_seconds} second crawl delay.')
+            print(f'Waiting for {self.crawl_delay_seconds} second crawl delay (per robots.txt).')
 
         while True:
             if self.seconds_waited >= self.crawl_delay_seconds:

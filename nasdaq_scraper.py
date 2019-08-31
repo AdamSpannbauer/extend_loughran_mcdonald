@@ -1,5 +1,6 @@
 import os
 import json
+import warnings
 from bs4 import BeautifulSoup
 from scraper import Scraper
 
@@ -10,9 +11,11 @@ class NasdaqScraper(Scraper):
     article_div_selector = '#newsContent p'
     article_text_selector = '#articlebody p'
 
-    def __init__(self, html_parser="html.parser"):
+    def __init__(self, html_parser="html.parser", verbose=True):
         self.html_parser = html_parser
-        super().__init__(robots_txt_url=self.robots_txt_url)
+        # TODO: get rid of verbose flag and use logger
+        self.verbose = verbose
+        super().__init__(robots_txt_url=self.robots_txt_url, verbose=verbose)
 
         self.article_urls = []
         self.articles = []
@@ -33,9 +36,13 @@ class NasdaqScraper(Scraper):
 
     def _scrape_articles(self, n_pages=1):
         for i in range(n_pages):
+            if self.verbose:
+                print(f'Grabbing article links for page {i} of {n_pages}')
             self._scrape_article_urls(page=i + 1)
 
-        for article_url in self.article_urls:
+        for i, article_url in enumerate(self.article_urls):
+            if self.verbose:
+                print(f'Scraping article {i} of {len(self.article_urls)}')
             article_html = self.get_page(article_url)
             article_soup = BeautifulSoup(article_html, features=self.html_parser)
 
@@ -54,8 +61,9 @@ class NasdaqScraper(Scraper):
     def scrape_articles(self, n_pages=1, n_tries=5):
         for i in range(n_tries):
             if i:
-                print(f'Retry {i} of {n_tries - 1}')
+                warnings.warn(f'Failed... Retry {i} of {n_tries - 1}')
 
+            # TODO: this try catch logic is in a pretty bad place. could lose a lot of work
             # noinspection PyBroadException
             try:
                 self._scrape_articles(n_pages=n_pages)
@@ -74,4 +82,4 @@ class NasdaqScraper(Scraper):
 
         articles_dict = {'articles': articles}
         with open(file_path, 'w') as f:
-            f.write(json.dumps(articles_dict))
+            f.write(json.dumps(articles_dict, indent=2))
