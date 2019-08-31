@@ -9,3 +9,4 @@ bs4
 sklearn
 plotly_express
 plotly
+nltk
